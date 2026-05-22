@@ -89,6 +89,13 @@ tasks.jar {
     enabled = false // Disable the default jar task since we are using shadowJar
 }
 
+tasks.register("printNextReleaseVersion") {
+    val nextRelease = semver.version.toString().removeSuffix("-SNAPSHOT")
+    doLast {
+        println(nextRelease)
+    }
+}
+
 tasks.processResources {
     // work around IDEA-296490
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
