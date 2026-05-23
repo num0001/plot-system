@@ -72,7 +72,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -207,7 +206,7 @@ public final class PlotUtils {
         }
 
         Polygonal2DRegion region = new Polygonal2DRegion(
-                BukkitAdapter.adapt(world),
+                null,
                 plot.getOutline(),
                 clipboard.getMinimumPoint().y(),
                 clipboard.getMaximumPoint().y()
@@ -259,14 +258,14 @@ public final class PlotUtils {
         // Load finished plot region as cuboid region
         if (!plot.getWorld().loadWorld()) return false;
         com.sk89q.worldedit.world.World world = new BukkitWorld(plot.getWorld().getBukkitWorld());
-        Polygonal2DRegion region = new Polygonal2DRegion(world, plotOutlines, cuboidRegion.getMinimumPoint().y(), cuboidRegion.getMaximumPoint().y());
+        Polygonal2DRegion region = new Polygonal2DRegion(null, plotOutlines, cuboidRegion.getMinimumPoint().y(), cuboidRegion.getMaximumPoint().y());
 
         // Copy and write finished plot clipboard to schematic
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (Clipboard cb = new BlockArrayClipboard(region)) {
             cb.setOrigin(BlockVector3.at(plotCenter.x(), cuboidRegion.getMinimumY(), (double) plotCenter.z()));
 
-            ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(Objects.requireNonNull(region.getWorld()), region, cb, region.getMinimumPoint());
+            ForwardExtentCopy forwardExtentCopy = new ForwardExtentCopy(world, region, cb, region.getMinimumPoint());
             Operations.complete(forwardExtentCopy);
 
             try (ClipboardWriter writer = AbstractPlot.CLIPBOARD_FORMAT.getWriter(outputStream)) {
